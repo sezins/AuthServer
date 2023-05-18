@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Auth.Service\Auth.Service.csproj" />
+    <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj" />
   </ItemGroup>
 
 </Project>

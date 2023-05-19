@@ -8,7 +8,7 @@ namespace Auth.Core.UnitofWork
 {
     public interface IUnitofWork
     {
+        void Commit();
         Task CommitAsync();
-        Task Commit();
     }
 }

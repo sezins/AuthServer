@@ -10,6 +10,5 @@ namespace Auth.Core.Entities
     public class UserApp:IdentityUser
     {
         public string City { get; set; }
-        public string Picture { get; set; }
     }
 }

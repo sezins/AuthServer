@@ -13,7 +13,12 @@ namespace Auth.Data
         }
         public DbSet<Product> Products { get; set; }
         public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
 
-        
+            base.OnModelCreating(modelBuilder);
+        }
+
     }
 }

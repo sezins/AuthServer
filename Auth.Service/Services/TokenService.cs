@@ -51,7 +51,7 @@ namespace Auth.Service.Services
             claims.AddRange(client.Audiences.Select(x=>new Claim(JwtRegisteredClaimNames.Aud,x)));
 
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString());
-            new Claim(JwtRegisteredClaimNames.Sub,client.Id.ToString());
+            new Claim(JwtRegisteredClaimNames.Sub,client.ClientId.ToString());
             return claims;
         }
         public TokenDto CreateToken(UserApp userApp)

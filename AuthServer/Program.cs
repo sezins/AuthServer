@@ -1,3 +1,4 @@
+using Auth.Core.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using SharedLibrary.Configurations;
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 //optionspattern
 builder.Services.Configure<CustomTokenOption>(builder.Configuration.GetSection("TokenOption"));
+builder.Services.Configure<Client>(builder.Configuration.GetSection("Clients"));
 
 
 builder.Services.AddControllers();

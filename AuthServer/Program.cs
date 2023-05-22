@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+//optionspattern
 builder.Services.Configure<CustomTokenOption>(builder.Configuration.GetSection("TokenOption"));
 
 

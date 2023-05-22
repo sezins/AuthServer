@@ -12,7 +12,7 @@ namespace Auth.Core.Repository
     {
         Task<T> GetByIdAsync(int id);
         //Eğer data üzerinde where sorgusu ya da ilave sorgular yapsaydık IQueryable dönmek daha mantıklı. ToList diyene kadar databaseden gelen IQueryable tipteki listede istediğimiz sorguyu yazabiliriz. Ne zaman ki ToList dedik o zaman gidip databaseden o veriyi çekecektir.
-        IQueryable<T> GetAll();
+        Task<IQueryable<T>> GetAllAsync();
         //Where(x=> x.id>5) => buradaki x=> "T" tipine x.id>5 "bool" olarak aşağıda belirtilir.
         IQueryable<T> Where(Expression<Func<T, bool>> predicate);
         Task AddAsync(T entity);

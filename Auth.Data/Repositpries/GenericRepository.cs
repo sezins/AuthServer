@@ -25,7 +25,7 @@ namespace Auth.Data.Repositpries
             await _dbSet.AddAsync(entity);
         }
 
-        public IQueryable<T> GetAll()
+        public async Task<IQueryable<T>> GetAllAsync()
         {
             return _dbSet.AsNoTracking().AsQueryable();
         }

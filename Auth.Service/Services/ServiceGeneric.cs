@@ -3,6 +3,7 @@ using Auth.Core.Service;
 using Auth.Core.UnitofWork;
 using Auth.Data.Repositpries;
 using Auth.Data.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 using SharedLibrary.Dtos;
 using System.Collections.Immutable;
 using System.Linq.Expressions;
@@ -73,7 +74,7 @@ namespace Auth.Service.Services
             var entityList = await _genericRepository.Where(predicate).ToListAsync();
             var dtoList = ObjectMapper.Mapper.Map<List<TDto>>(entityList);
             return Response<IEnumerable<TDto>>.Success(dtoList, 200);
-        }
+        
         }
     }
 }

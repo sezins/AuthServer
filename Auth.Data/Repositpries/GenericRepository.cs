@@ -9,50 +9,55 @@ using System.Threading.Tasks;
 
 namespace Auth.Data.Repositpries
 {
-    public class GenericRepository<Tentity>:IGenericRepository<Tentity> where Tentity : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly DbContext _context;
-        private readonly DbSet<Tentity> _dbset;
-        public GenericRepository(AppDbContext context) 
+        //Sonrasında ProductRepository vs. oluşturduğumda context'e ulaşabilmek için protected tanımladım.
+        protected readonly AppDbContext _context;
+        private readonly DbSet<T> _dbSet;
+        public GenericRepository(AppDbContext context)
         {
             _context = context;
-            _dbset=context.Set<Tentity>();
+            _dbSet = context.Set<T>();
         }
 
-        public async Task AddAsync(Tentity entity)
+        public async Task AddAsync(T entity)
         {
-            await _dbset.AddAsync(entity);
+            await _dbSet.AddAsync(entity);
         }
 
-        public async Task<IEnumerable<Tentity>> GetAllAsync()
+        public IQueryable<T> GetAll()
         {
-            return await _dbset.ToListAsync();
+            return _dbSet.AsNoTracking().AsQueryable();
         }
 
-        public async Task<Tentity> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync(int id)
         {
-            var entity = await _dbset.FindAsync(id);
-            if (entity!=null)
+            //Find primary key bölümünü arar. Metotu çağırdığımızda "params object [] keyValues" olarak ifade yer alır bunun nedeni Sql tarafında bir tabloda 2 alan primary key olabilir.
+            var entity = await _dbSet.FindAsync(id);
+            if (entity != null)
             {
+                //Memory'de tutulmaması için track edilmesini kapattık. Burada kapadık Update methodunda zaten biz veriyoruz track edilirken aynı id olan modeller karışmaması için yaptık.
                 _context.Entry(entity).State = EntityState.Detached;
             }
             return entity;
         }
 
-        public void Remove(Tentity entity)
+        public void Remove(T entity)
         {
-            _dbset.Remove(entity);
+            //_context.Entry(entity).State = EntityState.Deleted; (Alternatif)
+            _dbSet.Remove(entity);
         }
 
-        public Tentity Update(Tentity entity)
+        public T Update(T entity)
         {
-            _context.Entry(entity).State= EntityState.Modified;
+            //_context.Entry(entity).State = EntityState.Modified; (Alternatif)
+            _dbSet.Update(entity);
             return entity;
         }
 
-        public IEnumerable<Tentity> Where(Expression<Func<Tentity, bool>> predicate)
+        public IQueryable<T> Where(Expression<Func<T, bool>> predicate)
         {
-            return _dbset.Where(predicate);
+            return _dbSet.Where(predicate);
         }
     }
 }

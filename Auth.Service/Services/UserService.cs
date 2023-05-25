@@ -1,5 +1,6 @@
 ﻿using Auth.Core.DTOs;
 using Auth.Core.Entities;
+using Auth.Core.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using SharedLibrary.Dtos;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Auth.Service.Services
 {
-    public class UserService
+    public class UserService:IUserService
     {
         private readonly UserManager<UserApp> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -40,6 +41,19 @@ namespace Auth.Service.Services
 
             return Response<UserAppDto>.Success(ObjectMapper.Mapper.Map<UserAppDto>(user), 200);
         }
+
+        public async Task<Response<UserAppDto>> CreateUserByNameAsync(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+
+            if (user == null)
+            {
+                return Response<UserAppDto>.Fail("UserName not found", 404, true);
+            }
+
+            return Response<UserAppDto>.Success(ObjectMapper.Mapper.Map<UserAppDto>(user), 200);
+        }
+
         //Kullanıcıya rol eklemek için bu methodu tanımladık.
         public async Task<Response<NoDataDto>> CreateUserRolesAsync(string userName)
         {
@@ -56,16 +70,6 @@ namespace Auth.Service.Services
             return Response<NoDataDto>.Success(StatusCodes.Status201Created);
         }
 
-        public async Task<Response<UserAppDto>> GetUserByNameAsync(string userName)
-        {
-            var user = await _userManager.FindByNameAsync(userName);
-
-            if (user == null)
-            {
-                return Response<UserAppDto>.Fail("UserName not found", 404, true);
-            }
-
-            return Response<UserAppDto>.Success(ObjectMapper.Mapper.Map<UserAppDto>(user), 200);
-        }
+        
     }
 }

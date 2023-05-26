@@ -19,5 +19,10 @@ namespace AuthServer.Apı.Controllers
         {
             return CreateActionResult(await _userService.CreateUserAsync(createUserDto));
         }
+        [HttpGet]
+        public async Task<IActionResult> GetUser()
+        {
+            return CreateActionResult(await _userService.
+        }
     }
 }

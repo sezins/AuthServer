@@ -69,7 +69,17 @@ namespace Auth.Service.Services
             //Status code'u aşağıdaki gibi de yazabiliriz.
             return Response<NoDataDto>.Success(StatusCodes.Status201Created);
         }
+        public async Task<Response<UserAppDto>> GetUserByNameAsync(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
 
-        
+            if (user == null)
+            {
+                return Response<UserAppDto>.Fail("UserName not found", 404, true);
+            }
+
+            return Response<UserAppDto>.Success(ObjectMapper.Mapper.Map<UserAppDto>(user), 200);
+        }
+
     }
 }

@@ -9,10 +9,13 @@ using Auth.Data.UnitOfWork;
 
 using Auth.Service.Services;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SharedLibrary.Configurations;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +23,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 //optionspattern
 builder.Services.Configure<CustomTokenOption>(builder.Configuration.GetSection("TokenOption"));
+
+
+
 builder.Services.Configure<Client>(builder.Configuration.GetSection("Clients"));
 
 
@@ -38,6 +44,7 @@ builder.Services.AddDbContext<AppDbContext>(
             option.MigrationsAssembly(Assembly.GetAssembly(typeof(AppDbContext)).GetName().Name);
         }
         ));
+
 builder.Services.AddScoped<IUnitofWork, UnitOfWork>();
 
 builder.Services.AddIdentity<UserApp, IdentityRole>(Opt =>
@@ -45,6 +52,30 @@ builder.Services.AddIdentity<UserApp, IdentityRole>(Opt =>
     Opt.User.RequireUniqueEmail = true;
     Opt.Password.RequireNonAlphanumeric = false;
 }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme =JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme =JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opts => {
+
+    var tokenOptions = builder.Configuration.GetSection("TokenOption").Get<CustomTokenOption>();
+    opts.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+    {
+
+        ValidIssuer = tokenOptions.Issuer,
+        ValidAudience = tokenOptions.Audience[0],
+        IssuerSigningKey=SignService.GetSymmetricSecurityKey(tokenOptions.Issuer),
+
+        ValidateIssuerSigningKey = true,
+        ValidateAudience=true,
+        ValidateIssuer=true,
+        ValidateLifetime=true,
+        ClockSkew=TimeSpan.Zero
+    };
+
+});
 
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
